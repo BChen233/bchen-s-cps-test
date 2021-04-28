@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link
+        rel="stylesheet"
+        href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css"
+        />
+        <meta charset="utf-8">
+        <title>BChen's CPS TEST</title>
+        <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+        <style>
+            body {
+                background-color: rgb(250,249,248);
+                padding: 0px;
+                margin: 0px;
+            }
+            .main {
+                display: flex;
+                flex-flow: column nowrap;
+                width: auto;
+                height: 100vh;
+                box-sizing: border-box;
+                overflow: hidden;
+            }
+            .header {
+                display: flex;
+                flex-flow: row nowrap;
+                width: auto;
+                height: 62px;
+                box-sizing: border-box;
+                align-items: center;
+                background-color: rgb(255, 255, 255);
+                min-height: 47px;
+                padding: 0px 32px;
+                box-shadow: rgba(0, 0, 0, 0.133) 0px 6.4px 14.4px 0px, rgba(0, 0, 0, 0.11) 0px 1.2px 3.6px 0px;
+            }
+            .header a {
+                text-decoration: none;
+                padding-left: 18px;
+                padding-right: 18px;
+                color: RGB(115,115,115);
+            }
+            .header a:hover {
+                text-decoration: underline;
+            }
+            .click {
+                background: white;
+                border: 0px;
+                outline:none;
+                height: auto;
+                width: 50%;
+                display: flex;
+                justify-content: center;
+                margin-top: 50px;
+                padding-top: 5px ;
+	padding-bottom-5px ;
+            }
+            .click2 {
+                background: white;
+                border: 0px;
+                outline:none;
+                height: auto;
+                width: 50%;
+                display: flex;
+                justify-content: center;
+                margin-top: 50px;
+                padding-top: 5px ;
+	padding-bottom-5px ;
+            }
+            .click:active
+            {
+                background: gainsboro;
+            }
+        </style>
+    </head>
+    <body>
+        
+        <div class="main" id="app">
+            <div class="header">
+                <p class="ms-fontWeight-semibold ms-fontSize-24" style="color: RGB(50,49,48);">BChen's CPS Test</h3>
+                <a href="https://be233.com" class="ms-fontSize-22">小陈的窝</a>
+            </div>
+            <center>
+                <div v-if="start === 1">
+                    <div class="ms-fontSize-32 click2 ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-depth-4 "> 点击开始测试cps</div>
+                    <button class="ms-fontSize-32 ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-depth-4 click" @click="start2" style="padding-top: 60px; padding-bottom: 60px;">开始</button>
+                </div>
+                <div v-else-if="start === 2 ">
+                    <div class="ms-fontSize-32 click2 ms-motion-fadeIn ms-depth-4 "> 还有 {{ times.toFixed(1) }}s</div>
+                    <button class="ms-fontSize-32 click ms-depth-4 " @click="counter += 1" style="padding-top: 60px; padding-bottom: 60px;">{{ counter }}</button>
+                    <div class="ms-fontSize-32 click2 ms-motion-fadeIn ms-depth-4 "> 当前CPS: {{cps.toFixed(2)}} </div>
+                </div>
+                <div v-else-if="start === 3">
+                    <button class="ms-fontSize-32 ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-depth-4 click" @click="start3">重新开始</button>
+                    <div class="click2 ms-motion-fadeIn ms-depth-4">
+                        <div class="ms-fontSize-32  ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-fontWeight-regular" style="float:left">你的CPS是 &nbsp; </div>
+                        <div class="ms-fontSize-32 ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-fontWeight-bold" style="float:left">{{percent.toFixed(2)}}</div>
+                    </div>
+                    
+                </div>
+            </center>
+        </div>
+        
+        <script>
+        new Vue({
+            el: '#app',
+            data: {
+                counter: 0,
+                start: 1,
+                times: 5,
+                timeset: 10,
+                show: true
+            },
+            methods: {
+                timeron() {
+                    this.show = false
+                    this.timer = setInterval(()=>{
+                        this.times-=0.1
+                        if(this.times < 0.1){
+                        this.show = true
+                        this.start=3
+                        clearInterval(this.timer)
+                        }
+                    },100)
+                    
+                },
+                start2(){
+                    this.start = 2
+                    this.counter = 0
+                    this.times = this.timeset
+                    this.timeron()
+                },
+                start3(){
+                    this.start = 1
+                }
+              },
+            computed:{
+                percent(){
+                    return this.counter/10;
+                },
+                cps(){
+                    if(this.counter === 0) return 0;
+                    return this.counter/(10-this.times);
+                }
+            }
+        })
+        
+        </script>
+    </body>
+</html>
