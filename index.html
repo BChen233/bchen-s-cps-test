@@ -14,6 +14,15 @@
                 padding: 0px;
                 margin: 0px;
             }
+            .usernameInput
+            {
+                height: 40px;
+                display: inline-block;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                margin-top: 12px;
+                box-sizing: border-box;
+            }
             .main {
                 display: flex;
                 flex-flow: column nowrap;
@@ -53,7 +62,7 @@
                 justify-content: center;
                 margin-top: 50px;
                 padding-top: 5px ;
-	padding-bottom-5px ;
+	            padding-bottom: 5px;
             }
             .click2 {
                 background: white;
@@ -65,7 +74,7 @@
                 justify-content: center;
                 margin-top: 50px;
                 padding-top: 5px ;
-	padding-bottom-5px ;
+            	padding-bottom: 5px ;
             }
             .click:active
             {
@@ -74,42 +83,57 @@
         </style>
     </head>
     <body>
-        
         <div class="main" id="app">
             <div class="header">
                 <p class="ms-fontWeight-semibold ms-fontSize-24" style="color: RGB(50,49,48);">BChen's CPS Test</h3>
-                <a href="https://be233.com" class="ms-fontSize-22">小陈的窝</a>
             </div>
             <center>
-                <div v-if="start === 1">
-                    <div class="ms-fontSize-32 click2 ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-depth-4 "> 点击开始测试cps</div>
-                    <button class="ms-fontSize-32 ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-depth-4 click" @click="start2" style="padding-top: 60px; padding-bottom: 60px;">开始</button>
+                <div v-if="page === 1">
+                    <div class="ms-fontSize-32 click2 ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-depth-4 "> Click to Start Testing Your CPS</div>
+                    <button class="ms-fontSize-32 ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-depth-4 click" @click="start2" style="padding-top: 60px; padding-bottom: 60px;">Start</button>
+                    <div class="ms-fontSize-32 ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-depth-4 click2" style="height: 70px;">
+                        <div style="padding-top: 12px;">Your Username: &nbsp;</div>
+                        <input v-model="userInput" placeholder='Player' class="usernameInput" type="text" id="fname" name="fname"><br><br>
+                    </div>
                 </div>
-                <div v-else-if="start === 2 ">
-                    <div class="ms-fontSize-32 click2 ms-motion-fadeIn ms-depth-4 "> 还有 {{ times.toFixed(1) }}s</div>
+                <div v-else-if="page === 2 ">
+                    <div class="ms-fontSize-32 click2 ms-motion-fadeIn ms-depth-4 "> {{ times.toFixed(1) }} Seconds Left</div>
                     <button class="ms-fontSize-32 click ms-depth-4 " @click="counter += 1" style="padding-top: 60px; padding-bottom: 60px;">{{ counter }}</button>
-                    <div class="ms-fontSize-32 click2 ms-motion-fadeIn ms-depth-4 "> 当前CPS: {{cps.toFixed(2)}} </div>
+                    <div class="ms-fontSize-32 click2 ms-motion-fadeIn ms-depth-4 "> CPS: {{cps.toFixed(2)}} </div>
                 </div>
-                <div v-else-if="start === 3">
-                    <button class="ms-fontSize-32 ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-depth-4 click" @click="start3">重新开始</button>
+                <div v-else-if="page === 3">
                     <div class="click2 ms-motion-fadeIn ms-depth-4">
-                        <div class="ms-fontSize-32  ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-fontWeight-regular" style="float:left">你的CPS是 &nbsp; </div>
+                        <div class="ms-fontSize-32  ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-fontWeight-regular" style="float:left">Your CPS is &nbsp; </div>
                         <div class="ms-fontSize-32 ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-fontWeight-bold" style="float:left">{{percent.toFixed(2)}}</div>
                     </div>
                     
+                    <div class="ms-fontSize-32 ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-depth-4 click2" style="height: auto;">
+                        <div align="center">
+                            <center><b>Leaderboard</b></center>
+                            <ul id="array-rendering" class="demo">
+                                <li v-for="item in scores">
+                                    {{ item.userName }}   {{ item.fcps }}
+                                </li>
+                            </ul>
+                        </div>                       
+                    </div>
+                    <button class="ms-fontSize-32 ms-motion-slideUpIn $ms-motion-duration-4 cubic-bezier(0.1, 0.9, 0.2, 1) ms-depth-4 click" @click="start3">Restart</button>
                 </div>
             </center>
         </div>
         
         <script>
-        new Vue({
+        new Vue({   
             el: '#app',
             data: {
                 counter: 0,
-                start: 1,
+                page: 1,
                 times: 5,
-                timeset: 10,
-                show: true
+                timeset: 1,
+                show: true,
+                scores: [],
+                userInput: 'Player'
+                
             },
             methods: {
                 timeron() {
@@ -117,21 +141,24 @@
                     this.timer = setInterval(()=>{
                         this.times-=0.1
                         if(this.times < 0.1){
-                        this.show = true
-                        this.start=3
-                        clearInterval(this.timer)
+                            this.show = true
+                            this.scores.push({userName:this.userInput,fcps:this.cps.toFixed(2)})
+                            this.page = 3
+                            clearInterval(this.timer)
                         }
                     },100)
                     
                 },
                 start2(){
-                    this.start = 2
+                    this.page = 2
                     this.counter = 0
                     this.times = this.timeset
                     this.timeron()
-                },
+                    
+                },  
                 start3(){
-                    this.start = 1
+                    this.page = 1
+                    console.log(this.scores)
                 }
               },
             computed:{
